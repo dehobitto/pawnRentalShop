@@ -1,0 +1,38 @@
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+
+namespace RentalShop.Application.Commands
+{
+    /// <summary>
+    /// Represents a 'ConcreteCommand' in the Command GoF pattern (variant B).
+    ///
+    /// Domain role: "Return" cashier action. Encapsulates everything needed
+    /// to take an item back so the operation can be queued or undone (e.g. if
+    /// the item turns out to be damaged on inspection).
+    /// </summary>
+    public class ReturnItemCommand : CashierCommand
+    {
+        private readonly string _sku;
+        private readonly ILogger<ReturnItemCommand> _logger;
+
+        public ReturnItemCommand(CashierTerminal terminal, string sku, ILogger<ReturnItemCommand> logger)
+            : base(terminal)
+        {
+            _sku = sku;
+            _logger = logger;
+        }
+
+        public override async Task ExecuteAsync(CancellationToken ct = default)
+        {
+            _logger.LogInformation("[Return] Receiving {Sku} from customer", _sku);
+            await Terminal.CommitAsync(ct);
+        }
+
+        public override Task UndoAsync(CancellationToken ct = default)
+        {
+            _logger.LogInformation("[Return] UNDO — re-issuing {Sku} to customer", _sku);
+            return Task.CompletedTask;
+        }
+    }
+}
