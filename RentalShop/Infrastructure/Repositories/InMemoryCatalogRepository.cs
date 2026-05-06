@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -30,8 +31,36 @@ namespace RentalShop.Infrastructure.Repositories
         /// <inheritdoc/>
         public Task<RentalItem?> FindAsync(string sku, CancellationToken ct = default)
         {
-            _logger.LogDebug("In-memory store lookup for {Sku}", sku);
+            _logger.LogDebug("[Pattern: Proxy] RealSubject lookup for {Sku}", sku);
             return Task.FromResult(_store.TryGetValue(sku, out var item) ? item : null);
+        }
+
+        /// <inheritdoc/>
+        public Task<IReadOnlyList<RentalItem>> GetAllAsync(CancellationToken ct = default)
+        {
+            _logger.LogDebug("[Pattern: Proxy] RealSubject returning full in-memory catalog");
+            return Task.FromResult<IReadOnlyList<RentalItem>>(_store.Values.ToList());
+        }
+
+        /// <inheritdoc/>
+        public Task CommitStateAsync(RentalItem item, CancellationToken ct = default)
+        {
+            // In-memory store holds object references — state change is already visible.
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task AddAsync(RentalItem item, CancellationToken ct = default)
+        {
+            _store[item.Sku] = item;
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task DeleteAsync(string sku, CancellationToken ct = default)
+        {
+            _store.Remove(sku);
+            return Task.CompletedTask;
         }
     }
 }

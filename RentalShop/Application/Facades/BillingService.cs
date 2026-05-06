@@ -25,7 +25,8 @@ namespace RentalShop.Application.Facades
         /// </summary>
         public decimal CalculateTotal(decimal baseRate, int days)
         {
-            _logger.LogInformation("Billing: base €{BaseRate} × {Days}d", baseRate, days);
+            _logger.LogDebug("[Pattern: Facade] BillingService.CalculateTotal: €{BaseRate}/day × {Days}d",
+                baseRate, days);
             return _pricing.Calculate(baseRate, days);
         }
     }

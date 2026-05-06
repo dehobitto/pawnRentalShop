@@ -18,12 +18,17 @@ namespace RentalShop.Application.Services
         public CustomerSubscriber(ItemWaitlist waitlist, string name, ILogger<CustomerSubscriber> logger)
         {
             _waitlist = waitlist;
-            _name = name;
-            _logger = logger;
+            _name     = name;
+            _logger   = logger;
         }
 
-        public void OnItemAvailable() =>
-            _logger.LogInformation("[Notify → {Name}] {Sku} is now {Status}",
-                _name, _waitlist.Sku, _waitlist.Status);
+        public void OnItemAvailable()
+        {
+            _logger.LogDebug("[Pattern: Observer] ConcreteObserver notified: {Name} for {Sku}",
+                _name, _waitlist.Sku);
+            _logger.LogInformation(
+                "Waitlist notification logged for {CustomerName} — item {Sku} is available",
+                _name, _waitlist.Sku);
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace RentalShop.Application.Facades
         /// <summary>Emit the receipt / contract via the active renderer.</summary>
         public Task GenerateAsync(CancellationToken ct = default)
         {
-            _logger.LogInformation("Generating document [{DocumentType}]", _renderer.GetType().Name);
+            _logger.LogInformation("Document generated: {DocumentType}", _renderer.GetType().Name);
             _renderer.Render();
             return Task.CompletedTask;
         }

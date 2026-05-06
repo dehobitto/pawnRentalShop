@@ -5,8 +5,9 @@ namespace RentalShop.Application.Services
     /// <summary>
     /// Represents a 'ConcreteClass' in the Template Method GoF pattern (variant B).
     ///
-    /// Domain role: rental-contract document — long, legally-formatted, with
-    /// full T&amp;C and signature lines.
+    /// Domain role: rental-contract document — legally-formatted, with full
+    /// T&amp;C and signature lines. ASCII art and visual formatting have been
+    /// removed; in the web layer this will be a Razor partial view.
     /// </summary>
     public class ContractDocument : DocumentRenderer
     {
@@ -14,17 +15,12 @@ namespace RentalShop.Application.Services
 
         public override void RenderHeader()
         {
-            Logger.LogInformation("╔══ RENTAL CONTRACT #C-2026-0001 ══╗");
-            Logger.LogInformation("║ Lessor: RentalShop Inc.          ║");
-            Logger.LogInformation("║ Lessee: <customer info here>     ║");
-            Logger.LogInformation("╚══════════════════════════════════╝");
+            Logger.LogDebug("[Pattern: Template Method] ContractDocument.RenderHeader — contract header rendered");
         }
 
         public override void RenderFooter()
         {
-            Logger.LogInformation("Terms & conditions: <T&C body>");
-            Logger.LogInformation("Lessee signature: __________________");
-            Logger.LogInformation("Lessor signature: __________________");
+            Logger.LogDebug("[Pattern: Template Method] ContractDocument.RenderFooter — T&C and signature block rendered");
         }
     }
 }

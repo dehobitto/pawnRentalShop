@@ -1,0 +1,33 @@
+@model ReturnFormViewModel
+@{ ViewData["Title"] = "Process Return"; }
+
+<div class="row justify-content-center">
+<div class="col-md-6">
+
+<h2 class="mb-4">Process Return</h2>
+
+<div class="card shadow-sm">
+<div class="card-body">
+
+<form asp-action="Return" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-4">
+        <label asp-for="Sku" class="form-label fw-semibold"></label>
+        <select asp-for="Sku" asp-items="Model.Items" class="form-select">
+            <option value="">— select an item —</option>
+        </select>
+        <span asp-validation-for="Sku" class="text-danger small"></span>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-warning">Process Return</button>
+        <a asp-controller="Item" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+
+</div>
+</div>
+
+</div>
+</div>

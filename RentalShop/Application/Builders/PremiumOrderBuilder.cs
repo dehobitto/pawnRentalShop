@@ -10,6 +10,10 @@ namespace RentalShop.Application.Builders
     /// </summary>
     public class PremiumOrderBuilder : OrderBuilder
     {
+        private const string InsuranceLine = "Extra: Insurance (€15)";
+        private const string DeliveryLine  = "Extra: Delivery (€10)";
+        private const string DiscountLine  = "Extra: Loyalty discount (−10%)";
+
         private readonly RentalOrder _order = new();
 
         public override void AddItems()
@@ -21,9 +25,9 @@ namespace RentalShop.Application.Builders
 
         public override void AddExtras()
         {
-            _order.AddPart("Extra: Insurance (€15)");
-            _order.AddPart("Extra: Delivery (€10)");
-            _order.AddPart("Extra: Loyalty discount (−10%)");
+            _order.AddPart(InsuranceLine);
+            _order.AddPart(DeliveryLine);
+            _order.AddPart(DiscountLine);
         }
 
         public override RentalOrder GetOrder() => _order;

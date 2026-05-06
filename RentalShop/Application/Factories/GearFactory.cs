@@ -1,4 +1,3 @@
-using System.Threading;
 using RentalShop.Domain.Entities;
 
 namespace RentalShop.Application.Factories
@@ -9,22 +8,18 @@ namespace RentalShop.Application.Factories
     /// Domain role: factory for the "gear" category — produces
     /// <see cref="GearItem"/> instances with auto-numbered SKUs.
     /// </summary>
-    public class GearFactory : ItemFactory
+    public class GearFactory : TemplatedItemFactory
     {
-        private static readonly (string Name, decimal Price)[] Templates =
+        protected override (string Name, decimal Price)[] Templates { get; } =
         {
             ("Camping Tent", 22m),
-            ("Sleeping Bag", 8m),
-            ("Kayak", 35m),
+            ("Sleeping Bag",  8m),
+            ("Kayak",        35m),
         };
 
-        private int _counter;
+        protected override string SkuPrefix => "GEAR";
 
-        public override RentalItem Create()
-        {
-            var n = Interlocked.Increment(ref _counter);
-            var template = Templates[(n - 1) % Templates.Length];
-            return new GearItem($"GEAR-{n:D3}", template.Name, template.Price);
-        }
+        protected override RentalItem BuildItem(string sku, string name, decimal price)
+            => new GearItem(sku, name, price);
     }
 }

@@ -1,4 +1,3 @@
-using System.Threading;
 using RentalShop.Domain.Entities;
 
 namespace RentalShop.Application.Factories
@@ -10,22 +9,18 @@ namespace RentalShop.Application.Factories
     /// <see cref="ToolItem"/> instances with auto-numbered SKUs drawn from a
     /// small in-memory template pool.
     /// </summary>
-    public class ToolFactory : ItemFactory
+    public class ToolFactory : TemplatedItemFactory
     {
-        private static readonly (string Name, decimal Price)[] Templates =
+        protected override (string Name, decimal Price)[] Templates { get; } =
         {
             ("Cordless Drill", 12m),
-            ("Circular Saw", 18m),
-            ("Hammer-set", 6m),
+            ("Circular Saw",   18m),
+            ("Hammer-set",      6m),
         };
 
-        private int _counter;
+        protected override string SkuPrefix => "TOOL";
 
-        public override RentalItem Create()
-        {
-            var n = Interlocked.Increment(ref _counter);
-            var template = Templates[(n - 1) % Templates.Length];
-            return new ToolItem($"TOOL-{n:D3}", template.Name, template.Price);
-        }
+        protected override RentalItem BuildItem(string sku, string name, decimal price)
+            => new ToolItem(sku, name, price);
     }
 }

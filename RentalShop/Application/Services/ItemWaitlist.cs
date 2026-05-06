@@ -18,7 +18,7 @@ namespace RentalShop.Application.Services
         }
 
         /// <summary>SKU of the waitlisted item; included in the notification payload.</summary>
-        public string Sku { get; }
+        public string Sku { get; init; }
 
         /// <summary>
         /// Item's externally-visible status string. Setting it auto-triggers

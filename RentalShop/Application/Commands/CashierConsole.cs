@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,11 +23,16 @@ namespace RentalShop.Application.Commands
 
         public CashierConsole(ILogger<CashierConsole> logger)
         {
+            ArgumentNullException.ThrowIfNull(logger);
             _logger = logger;
         }
 
         /// <summary>Stage the next cashier action.</summary>
-        public void Stage(CashierCommand command) => _staged = command;
+        public void Stage(CashierCommand command)
+        {
+            _logger.LogDebug("[Pattern: Command] Staging {CommandType}", command.GetType().Name);
+            _staged = command;
+        }
 
         /// <summary>Fire the staged action and remember it for a possible undo.</summary>
         public async Task ExecuteStagedAsync(CancellationToken ct = default)
@@ -34,6 +40,7 @@ namespace RentalShop.Application.Commands
             if (_staged is null) return;
             var command = _staged;
             _staged = null;              // clear before execute — prevents double-fire on re-entry
+            _logger.LogDebug("[Pattern: Command] Invoker executing {CommandType}", command.GetType().Name);
             await command.ExecuteAsync(ct);
             _history.Push(command);
         }
@@ -43,10 +50,12 @@ namespace RentalShop.Application.Commands
         {
             if (_history.Count == 0)
             {
-                _logger.LogWarning("Nothing to undo");
+                _logger.LogWarning("UndoLast called with empty history — nothing to undo");
                 return;
             }
-            await _history.Pop().UndoAsync(ct);
+            var lastCommand = _history.Pop();
+            _logger.LogDebug("[Pattern: Command] Invoker undoing {CommandType}", lastCommand.GetType().Name);
+            await lastCommand.UndoAsync(ct);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using RentalShop.Domain.Entities;
@@ -21,5 +22,17 @@ namespace RentalShop.Infrastructure.Repositories
         /// <c>Request()</c> so the proxy can do real catalog work.
         /// </summary>
         Task<RentalItem?> FindAsync(string sku, CancellationToken ct = default);
+
+        /// <summary>Returns the full rental catalog as a read-only list.</summary>
+        Task<IReadOnlyList<RentalItem>> GetAllAsync(CancellationToken ct = default);
+
+        /// <summary>Persists a state change already applied to a tracked entity.</summary>
+        Task CommitStateAsync(RentalItem item, CancellationToken ct = default);
+
+        /// <summary>Adds a newly created catalog item to the persistent store.</summary>
+        Task AddAsync(RentalItem item, CancellationToken ct = default);
+
+        /// <summary>Permanently removes an item by SKU. No-op if not found.</summary>
+        Task DeleteAsync(string sku, CancellationToken ct = default);
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -20,9 +21,14 @@ namespace RentalShop.Application.Facades
             _logger = logger;
         }
 
-        /// <summary>Charge / deposit (mock). Returns a completed task; an EF/gateway impl would await.</summary>
+        /// <summary>Charge / deposit (mock). Returns a completed task; a real impl would await the gateway.</summary>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="amount"/> is negative.</exception>
         public Task CaptureAsync(decimal amount, CancellationToken ct = default)
         {
+            if (amount < decimal.Zero)
+                throw new ArgumentOutOfRangeException(nameof(amount), amount,
+                    "Payment amount must not be negative.");
+
             _logger.LogInformation("Payment captured: €{Amount}", amount);
             return Task.CompletedTask;
         }

@@ -10,13 +10,14 @@ namespace RentalShop.Application.Services
     /// Domain role: fixed algorithm for producing a rental document
     /// (header → body → footer). Concrete subclasses fill in the variable
     /// steps to produce a "receipt" or a "rental contract"; the skeleton
-    /// itself never changes.
+    /// itself never changes. In the web layer, subclasses will be replaced by
+    /// Razor partial views; the pattern contract is preserved here.
     /// </summary>
     public abstract class DocumentRenderer
     {
         /// <summary>
-        /// Logger shared with concrete subclasses. All document output goes
-        /// through structured logging rather than direct console writes.
+        /// Shared structured logger. All document lifecycle output goes through
+        /// structured logging — no console or string output from this layer.
         /// </summary>
         protected readonly ILogger Logger;
 
@@ -26,8 +27,7 @@ namespace RentalShop.Application.Services
         }
 
         /// <summary>
-        /// Variable step — concrete renderer decides what goes into the
-        /// header (shop logo + receipt number, contract header + parties, …).
+        /// Variable step — concrete renderer decides what goes into the header.
         /// </summary>
         public abstract void RenderHeader();
 
@@ -43,20 +43,23 @@ namespace RentalShop.Application.Services
         /// </summary>
         public void Render()
         {
+            Logger.LogDebug("[Pattern: Template Method] {DocumentType}.Render starting",
+                GetType().Name);
             RenderHeader();
             RenderBody();
             RenderFooter();
+            Logger.LogDebug("[Pattern: Template Method] {DocumentType}.Render complete",
+                GetType().Name);
         }
 
         /// <summary>
-        /// Fixed body block (line items / totals) that is identical for
-        /// every document type.
+        /// Fixed body block (line items / totals) — identical for every
+        /// document type, so it is not overridable in subclasses.
         /// </summary>
         protected virtual void RenderBody()
         {
-            Logger.LogInformation("──────────────────────────────");
-            Logger.LogInformation(" Items & extras as ordered");
-            Logger.LogInformation("──────────────────────────────");
+            Logger.LogDebug("[Pattern: Template Method] {DocumentType}.RenderBody (fixed step)",
+                GetType().Name);
         }
     }
 }

@@ -10,6 +10,8 @@ namespace RentalShop.Application.Builders
     /// </summary>
     public class StandardOrderBuilder : OrderBuilder
     {
+        private const string DepositLine = "Extra: Basic deposit (€50)";
+
         private readonly RentalOrder _order = new();
 
         public override void AddItems()
@@ -18,10 +20,7 @@ namespace RentalShop.Application.Builders
             _order.AddPart("Line item: Hammer-set × 1");
         }
 
-        public override void AddExtras()
-        {
-            _order.AddPart("Extra: Basic deposit (€50)");
-        }
+        public override void AddExtras() => _order.AddPart(DepositLine);
 
         public override RentalOrder GetOrder() => _order;
     }

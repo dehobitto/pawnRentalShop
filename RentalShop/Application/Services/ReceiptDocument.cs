@@ -6,7 +6,8 @@ namespace RentalShop.Application.Services
     /// Represents a 'ConcreteClass' in the Template Method GoF pattern (variant A).
     ///
     /// Domain role: receipt document — short, customer-facing, focused on
-    /// totals and payment.
+    /// totals and payment confirmation. ASCII art and visual formatting have
+    /// been removed; in the web layer this will be a Razor partial view.
     /// </summary>
     public class ReceiptDocument : DocumentRenderer
     {
@@ -14,14 +15,12 @@ namespace RentalShop.Application.Services
 
         public override void RenderHeader()
         {
-            Logger.LogInformation("╭── RECEIPT #R-2026-0001 ──╮");
-            Logger.LogInformation("│ RentalShop Inc.          │");
-            Logger.LogInformation("╰──────────────────────────╯");
+            Logger.LogDebug("[Pattern: Template Method] ReceiptDocument.RenderHeader — receipt header rendered");
         }
 
         public override void RenderFooter()
         {
-            Logger.LogInformation("Thank you — please come again.");
+            Logger.LogDebug("[Pattern: Template Method] ReceiptDocument.RenderFooter — receipt footer rendered");
         }
     }
 }

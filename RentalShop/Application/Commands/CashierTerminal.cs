@@ -26,7 +26,7 @@ namespace RentalShop.Application.Commands
         /// </summary>
         public Task CommitAsync(CancellationToken ct = default)
         {
-            _logger.LogInformation("Cashier-terminal action committed");
+            _logger.LogDebug("[Pattern: Command] CashierTerminal.CommitAsync called — transaction committed");
             return Task.CompletedTask;
         }
     }

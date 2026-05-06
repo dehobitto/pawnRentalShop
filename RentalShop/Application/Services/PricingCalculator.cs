@@ -31,7 +31,7 @@ namespace RentalShop.Application.Services
         public decimal Calculate(decimal baseRate, int days)
         {
             var total = _strategy.Calculate(baseRate, days);
-            _logger.LogInformation("[{Strategy}] €{BaseRate} × {Days}d = €{Total}",
+            _logger.LogDebug("[Pattern: Strategy] {Strategy}: €{BaseRate}/day × {Days}d = €{Total}",
                 _strategy.GetType().Name, baseRate, days, total);
             return total;
         }

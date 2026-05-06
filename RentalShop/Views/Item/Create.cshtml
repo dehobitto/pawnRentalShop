@@ -1,0 +1,54 @@
+@model CreateItemViewModel
+@{ ViewData["Title"] = "Add Catalog Item"; }
+
+<div class="row justify-content-center">
+<div class="col-md-6">
+
+<h2 class="mb-4">Add Catalog Item</h2>
+
+<div class="card shadow-sm">
+<div class="card-body">
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label fw-semibold"></label>
+        <input asp-for="Name" class="form-control"
+               placeholder="e.g. Angle Grinder" />
+        <span asp-validation-for="Name" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PricePerDay" class="form-label fw-semibold"></label>
+        <div class="input-group">
+            <span class="input-group-text">€</span>
+            <input asp-for="PricePerDay" type="number" step="0.01" min="0.01"
+                   class="form-control" placeholder="0.00" />
+        </div>
+        <span asp-validation-for="PricePerDay" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-4">
+        <label asp-for="Category" class="form-label fw-semibold"></label>
+        <select asp-for="Category"
+                asp-items="Html.GetEnumSelectList<ItemCategory>()"
+                class="form-select"></select>
+        <div class="form-text">
+            <b>Tool</b> — power tools, hand tools.&nbsp;
+            <b>Gear</b> — outdoor / camping equipment.
+        </div>
+        <span asp-validation-for="Category" class="text-danger small"></span>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-success">Add to Catalog</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+
+</div>
+</div>
+
+</div>
+</div>

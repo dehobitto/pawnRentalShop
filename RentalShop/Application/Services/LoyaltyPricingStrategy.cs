@@ -1,16 +1,25 @@
+using Microsoft.Extensions.Options;
+using RentalShop.Models;
+
 namespace RentalShop.Application.Services
 {
     /// <summary>
     /// Represents a 'ConcreteStrategy' in the Strategy GoF pattern (variant C).
     ///
-    /// Domain role: loyalty / repeat-customer pricing — applies a 15%
-    /// discount on top of the standard base rate. Pure calculation; logging
-    /// is handled by the <see cref="PricingCalculator"/> context.
+    /// Domain role: loyalty / repeat-customer pricing — applies a configurable
+    /// discount on top of the standard base rate. The multiplier is loaded from
+    /// <see cref="RentalShopSettings.LoyaltyMultiplier"/> via
+    /// <c>IOptions&lt;RentalShopSettings&gt;</c> so it can be changed in
+    /// <c>appsettings.json</c> without recompilation.
+    /// Pure calculation; logging is handled by the <see cref="PricingCalculator"/> context.
     /// </summary>
     public class LoyaltyPricingStrategy : IPricingStrategy
     {
-        private const decimal LoyaltyDiscount = 0.85m;
+        private readonly decimal _multiplier;
 
-        public decimal Calculate(decimal baseRate, int days) => baseRate * days * LoyaltyDiscount;
+        public LoyaltyPricingStrategy(IOptions<RentalShopSettings> options)
+            => _multiplier = options.Value.LoyaltyMultiplier;
+
+        public decimal Calculate(decimal baseRate, int days) => baseRate * days * _multiplier;
     }
 }
