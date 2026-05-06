@@ -10,21 +10,12 @@ using RentalShop.Models;
 
 namespace RentalShop.Controllers
 {
-    /// <summary>
-    /// Thin controller for the rent / return flows. Delegates all business
-    /// logic to <see cref="RentalShopFacade"/>; the controller only maps HTTP
-    /// to method calls and ViewModels to views.
-    /// Requires authentication — unauthenticated requests are redirected to
-    /// <c>/Account/Login</c> by the cookie middleware.
-    /// </summary>
     [Authorize]
     public class RentalController : Controller
     {
         private readonly RentalShopFacade _facade;
 
         public RentalController(RentalShopFacade facade) => _facade = facade;
-
-        // ── Rent ─────────────────────────────────────────────────────────────
 
         [HttpGet]
         public async Task<IActionResult> Rent(string? sku)
@@ -42,16 +33,15 @@ namespace RentalShop.Controllers
                 var ok = await _facade.ProcessRentalAsync(form.Sku, form.Days);
                 if (ok)
                 {
-                    TempData["Success"] = $"Item {form.Sku} rented for {form.Days} day(s). Contract generated.";
+                    TempData["SuccessMessage"] = $"Item rented for {form.Days} day(s). Contract generated.";
                     return RedirectToAction("Index", "Item");
                 }
-                ModelState.AddModelError(nameof(form.Sku), $"Item '{form.Sku}' was not found in the catalog.");
+                TempData["ErrorMessage"] = "Sorry, this item is no longer available or was modified by someone else.";
+                return RedirectToAction("Index", "Item");
             }
             form.Items = await LoadItemSelectListAsync();
             return View(form);
         }
-
-        // ── Return ────────────────────────────────────────────────────────────
 
         [HttpGet]
         public async Task<IActionResult> Return(string? sku)
@@ -69,16 +59,15 @@ namespace RentalShop.Controllers
                 var ok = await _facade.ProcessReturnAsync(form.Sku);
                 if (ok)
                 {
-                    TempData["Success"] = $"Item {form.Sku} returned successfully. Receipt generated.";
+                    TempData["SuccessMessage"] = $"Item returned successfully. Receipt generated.";
                     return RedirectToAction("Index", "Item");
                 }
-                ModelState.AddModelError(nameof(form.Sku), $"Item '{form.Sku}' was not found in the catalog.");
+                TempData["ErrorMessage"] = "Could not process return. The item may not be in a rented state.";
+                return RedirectToAction("Index", "Item");
             }
             form.Items = await LoadItemSelectListAsync();
             return View(form);
         }
-
-        // ── Helpers ───────────────────────────────────────────────────────────
 
         private async Task<List<SelectListItem>> LoadItemSelectListAsync()
         {

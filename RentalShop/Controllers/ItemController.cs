@@ -58,9 +58,21 @@ namespace RentalShop.Controllers
         public async Task<IActionResult> Return(string sku)
         {
             var ok = await _facade.ProcessReturnAsync(sku);
-            TempData[ok ? "Success" : "Error"] = ok
-                ? $"Item returned successfully."
-                : $"Could not process return for '{sku}'. It may not be in a rented state.";
+            if (ok)
+                TempData["SuccessMessage"] = "Item returned successfully. Receipt generated.";
+            else
+                TempData["ErrorMessage"] = $"Could not process return for '{sku}'. It may not be in a rented state.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(string sku)
+        {
+            var ok = await _facade.DeleteCatalogItemAsync(sku);
+            if (ok)
+                TempData["SuccessMessage"] = "Item deleted from catalog.";
+            else
+                TempData["ErrorMessage"] = $"Could not delete '{sku}'. Only available items can be deleted.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -74,7 +86,7 @@ namespace RentalShop.Controllers
 
             await _facade.CreateCatalogItemAsync(vm.Name, vm.PricePerDay, vm.Category);
 
-            TempData["Success"] = $"{vm.Category:G} item '{vm.Name}' added to catalog.";
+            TempData["SuccessMessage"] = $"{vm.Category:G} item '{vm.Name}' added to catalog.";
             return RedirectToAction(nameof(Index));
         }
 

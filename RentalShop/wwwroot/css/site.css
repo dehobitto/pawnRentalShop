@@ -1,10 +1,7 @@
-/* ── State badges ──────────────────────────────────────────────────────── */
 .state-badge-Available   { background-color: #198754; }
 .state-badge-Rented      { background-color: #0d6efd; }
 .state-badge-UnderRepair { background-color: #ffc107; color: #000 !important; }
 
-/* ── Navbar ────────────────────────────────────────────────────────────── */
 .navbar-brand span { font-weight: 700; letter-spacing: .5px; }
 
-/* ── Login page ────────────────────────────────────────────────────────── */
 .login-card { max-width: 420px; }

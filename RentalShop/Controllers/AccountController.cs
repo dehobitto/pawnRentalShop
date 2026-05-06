@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -40,17 +39,18 @@ namespace RentalShop.Controllers
         {
             if (!ModelState.IsValid) return View(vm);
 
-            var user = await _db.Users
-                .FirstOrDefaultAsync(u => u.Username == vm.Username);
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == vm.Username);
 
             if (user is null || !VerifyPassword(vm.Password, user.PasswordHash))
             {
+                TempData["ErrorMessage"] = "Invalid username or password.";
                 ModelState.AddModelError(string.Empty, "Invalid username or password.");
                 return View(vm);
             }
 
             await SignInAsync(user.Username, vm.RememberMe);
             _logger.LogInformation("User {Username} signed in", user.Username);
+            TempData["SuccessMessage"] = $"Welcome back, {user.Username}!";
 
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return Redirect(returnUrl);
@@ -89,6 +89,7 @@ namespace RentalShop.Controllers
 
             await SignInAsync(user.Username, isPersistent: false);
             _logger.LogInformation("User {Username} registered and signed in", user.Username);
+            TempData["SuccessMessage"] = $"Account created. Welcome, {vm.Username}!";
 
             return RedirectToAction("Index", "Item");
         }
@@ -98,6 +99,7 @@ namespace RentalShop.Controllers
         {
             _logger.LogInformation("User {Username} signed out", User.Identity?.Name);
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            TempData["SuccessMessage"] = "You have been signed out.";
             return RedirectToAction("Login");
         }
 
